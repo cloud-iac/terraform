@@ -4,7 +4,7 @@ resource "aws_key_pair" "ec2-key" {
 }
 
 resource "aws_instance" "ec2" {
-  ami = "${lookup(var.AMIS, var.AWS_REGION)}"
+  ami           = lookup(var.AMIS, var.AWS_REGION)
   instance_type = "t2.micro"
   key_name      = aws_key_pair.ec2-key.key_name
 
@@ -15,7 +15,7 @@ resource "aws_instance" "ec2" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/script.sh",
-      "sudo sed -i -e 's/\r$//' /tmp/script.sh",  # Remove the spurious CR characters.
+      "sudo sed -i -e 's/\r$//' /tmp/script.sh", # Remove the spurious CR characters.
       "sudo /tmp/script.sh",
     ]
   }
