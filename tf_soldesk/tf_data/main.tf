@@ -24,7 +24,7 @@ data "aws_ami" "amazon_linux2" {
     values = ["hvm"]
   }
 
-  owners = ["137112412989"]  
+  owners = ["137112412989"]
 }
 
 //create vpc
@@ -41,8 +41,8 @@ resource "aws_vpc" "tf_vpc" {
 
 //create pub-subnet
 resource "aws_subnet" "tf_pub_sn" {
-  vpc_id     = aws_vpc.tf_vpc.id
-  cidr_block = "10.0.0.0/24"
+  vpc_id            = aws_vpc.tf_vpc.id
+  cidr_block        = "10.0.0.0/24"
   availability_zone = "ap-northeast-2a"
   tags = {
     Name = "tf_pub_sn"
@@ -143,10 +143,10 @@ resource "aws_security_group_rule" "tf_pub_sg_egress" {
 resource "aws_instance" "tf_web" {
   ami           = data.aws_ami.amazon_linux2.image_id
   instance_type = "t2.micro"
-  
+
   associate_public_ip_address = true
-  subnet_id = aws_subnet.tf_pub_sn.id
-  vpc_security_group_ids = [ aws_security_group.tf_pub_sg.id ]
+  subnet_id                   = aws_subnet.tf_pub_sn.id
+  vpc_security_group_ids      = [aws_security_group.tf_pub_sg.id]
 
   user_data = <<-EOT
   #!/bin/bash
