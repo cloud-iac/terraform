@@ -49,3 +49,7 @@ resource "aws_iam_user_policy_attachment" "dev_att" {
   user = each.key
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
+
+output "deleoper" {
+  value = [for user in var.users : user.name if user.level >= 5]
+}
