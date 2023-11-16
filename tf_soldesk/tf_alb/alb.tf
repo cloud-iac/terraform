@@ -5,11 +5,13 @@ resource "aws_lb" "tf_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.tf_alb_sg.id]
 
-  subnets = data.aws_subnets.pubs.ids
+  subnets = [
+    aws_subnet.tf_subnets["pub_sn_1"].id,
+    aws_subnet.tf_subnets["pub_sn_2"].id,
+  ]
 
   depends_on = [
-    aws_instance.tf_alb_web_1,
-    aws_instance.tf_alb_web_2,
+    aws_instance.tf_alb_web,
   ]
 
   tags = {
@@ -17,14 +19,12 @@ resource "aws_lb" "tf_alb" {
   }
 }
 
-# ALB Target Groups 생성
+# ALB Target Group 생성
 resource "aws_lb_target_group" "tf_alb-tg" {
-  name        = "alb-tg"
-  port        = "80"
-  protocol    = "HTTP"
-  vpc_id      = aws_vpc.tf_alb_vpc.id
-  target_type = "instance"
-
+  name     = "alb-tg"
+  port     = "80"
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.tf_alb_vpc.id
   tags = {
     Name = "tf_alb-tg"
   }
@@ -40,17 +40,16 @@ resource "aws_lb_listener" "tf-alb-listner" {
     target_group_arn = aws_lb_target_group.tf_alb-tg.arn
   }
 }
-
-# 대상그룹 연결
-resource "aws_lb_target_group_attachment" "tf_alb_tg_att1" {
-  target_group_arn = aws_lb_target_group.tf_alb-tg.arn
-  target_id        = aws_instance.tf_alb_web_1.id
-  port             = 80
-  depends_on       = [aws_lb_listener.tf-alb-listner]
+locals {
+  instances = [for o in aws_instance.tf_alb_web : o.id]
 }
-resource "aws_lb_target_group_attachment" "tf_alb_tg_att2" {
+# # 대상그룹 연결
+resource "aws_lb_target_group_attachment" "tf_alb_tg_att" {
+  count            = 2
   target_group_arn = aws_lb_target_group.tf_alb-tg.arn
-  target_id        = aws_instance.tf_alb_web_2.id
+  target_id        = local.instances[count.index]
   port             = 80
-  depends_on       = [aws_lb_listener.tf-alb-listner]
+  depends_on = [
+    aws_lb_listener.tf-alb-listner,
+  ]
 }
