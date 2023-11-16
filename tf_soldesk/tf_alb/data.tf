@@ -1,28 +1,12 @@
-data "aws_subnet" "pub1" {
+data "aws_subnets" "pubs" {
   filter {
     name   = "tag:Name"
-    values = ["TF-ALB_pub_sn_1"]
+    values = ["TF-ALB_pub_sn_1", "TF-ALB_pub_sn_2"]
   }
-  depends_on = [aws_subnet.tf_subnets]
 }
-data "aws_subnet" "pub2" {
+data "aws_subnets" "pris" {
   filter {
     name   = "tag:Name"
-    values = ["TF-ALB_pub_sn_2"]
+    values = ["TF-ALB_pri_sn_1", "TF-ALB_pri_sn_2"]
   }
-  depends_on = [aws_subnet.tf_subnets]
-}
-data "aws_subnet" "pri1" {
-  filter {
-    name   = "tag:Name"
-    values = ["TF-ALB_pri_sn_1"]
-  }
-  depends_on = [aws_subnet.tf_subnets]
-}
-data "aws_subnet" "pri2" {
-  filter {
-    name   = "tag:Name"
-    values = ["TF-ALB_pri_sn_2"]
-  }
-  depends_on = [aws_subnet.tf_subnets]
 }

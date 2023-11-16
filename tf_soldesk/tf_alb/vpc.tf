@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "tf_alb_igw" {
 #Nat Gateway
 resource "aws_nat_gateway" "tf_alb_nat_gateway" {
   allocation_id = aws_eip.tf_alb_eip.id
-  subnet_id     = data.aws_subnet.pub1.id
+  subnet_id     = data.aws_subnets.pubs.ids[0]
 
   tags = {
     Name = "${var.project_name}_nat_gateway"
@@ -80,25 +80,15 @@ resource "aws_route_table" "pri_rt" {
 
   depends_on = [aws_nat_gateway.tf_alb_nat_gateway]
 }
-
-# Route
-resource "aws_route_table_association" "pub_rt_ass1" {
-  subnet_id      = data.aws_subnet.pub1.id
+resource "aws_route_table_association" "pub_rt_ass" {
+  for_each       = toset(data.aws_subnets.pubs.ids)
+  subnet_id      = each.value
   route_table_id = aws_route_table.pub_rt.id
   depends_on     = [aws_internet_gateway.tf_alb_igw]
 }
-resource "aws_route_table_association" "pub_rt_ass2" {
-  subnet_id      = data.aws_subnet.pub2.id
-  route_table_id = aws_route_table.pub_rt.id
+resource "aws_route_table_association" "pri_rt_ass" {
+  for_each       = toset(data.aws_subnets.pris.ids)
+  subnet_id      = each.value
+  route_table_id = aws_route_table.pri_rt.id
   depends_on     = [aws_internet_gateway.tf_alb_igw]
-}
-resource "aws_route_table_association" "pri_rt_ass1" {
-  subnet_id      = data.aws_subnet.pri1.id
-  route_table_id = aws_route_table.pri_rt.id
-  depends_on     = [aws_nat_gateway.tf_alb_nat_gateway]
-}
-resource "aws_route_table_association" "pri_rt_ass2" {
-  subnet_id      = data.aws_subnet.pri2.id
-  route_table_id = aws_route_table.pri_rt.id
-  depends_on     = [aws_nat_gateway.tf_alb_nat_gateway]
 }

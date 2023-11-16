@@ -5,10 +5,7 @@ resource "aws_lb" "tf_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.tf_alb_sg.id]
 
-  subnets = [
-    data.aws_subnet.pub1.id,
-    data.aws_subnet.pub2.id,
-  ]
+  subnets = data.aws_subnets.pubs.ids
 
   depends_on = [
     aws_instance.tf_alb_web_1,
@@ -20,7 +17,7 @@ resource "aws_lb" "tf_alb" {
   }
 }
 
-# ALB Target Groups
+# ALB Target Groups 생성
 resource "aws_lb_target_group" "tf_alb-tg" {
   name        = "alb-tg"
   port        = "80"
@@ -33,7 +30,7 @@ resource "aws_lb_target_group" "tf_alb-tg" {
   }
 }
 
-# ALB listener
+# ALB listener 생성
 resource "aws_lb_listener" "tf-alb-listner" {
   load_balancer_arn = aws_lb.tf_alb.arn
   port              = "80"
@@ -44,7 +41,7 @@ resource "aws_lb_listener" "tf-alb-listner" {
   }
 }
 
-# 대상 그룹 연결
+# 대상그룹 연결
 resource "aws_lb_target_group_attachment" "tf_alb_tg_att1" {
   target_group_arn = aws_lb_target_group.tf_alb-tg.arn
   target_id        = aws_instance.tf_alb_web_1.id

@@ -4,7 +4,7 @@ resource "aws_instance" "tf_alb_web_1" {
   instance_type = "t2.micro"
 
   associate_public_ip_address = false
-  subnet_id                   = data.aws_subnet.pri1.id
+  subnet_id                   = data.aws_subnets.pris.ids[0]
   vpc_security_group_ids      = [aws_security_group.tf_alb_sg.id]
 
   user_data = <<-EOT
@@ -26,7 +26,7 @@ resource "aws_instance" "tf_alb_web_2" {
   instance_type = "t2.micro"
 
   associate_public_ip_address = false
-  subnet_id                   = data.aws_subnet.pri2.id
+  subnet_id                   = data.aws_subnets.pris.ids[1]
   vpc_security_group_ids      = [aws_security_group.tf_alb_sg.id]
 
   user_data = <<-EOT
