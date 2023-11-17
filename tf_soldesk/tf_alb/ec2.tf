@@ -24,8 +24,3 @@
 #     aws_nat_gateway.tf_alb_nat_gateway,
 #   ]
 # }
-
-#Elastic ip
-resource "aws_eip" "tf_alb_eip" {
-  domain = "vpc"
-}

@@ -33,6 +33,11 @@ resource "aws_internet_gateway" "tf_alb_igw" {
   }
 }
 
+#Elastic ip
+resource "aws_eip" "tf_alb_eip" {
+  domain = "vpc"
+}
+
 #Nat Gateway
 resource "aws_nat_gateway" "tf_alb_nat_gateway" {
   allocation_id = aws_eip.tf_alb_eip.id
@@ -77,19 +82,13 @@ resource "aws_route_table" "pri_rt" {
 }
 
 #Connect Routing tables
-resource "aws_route_table_association" "pub_rt_ass_1" {
-  subnet_id      = aws_subnet.tf_subnets["pub_sn_1"].id
+resource "aws_route_table_association" "pub_rt_ass" {
+  for_each = toset(["pub_sn_1", "pub_sn_2"])
+  subnet_id      = aws_subnet.tf_subnets["${each.value}"].id
   route_table_id = aws_route_table.pub_rt.id
 }
-resource "aws_route_table_association" "pub_rt_ass_2" {
-  subnet_id      = aws_subnet.tf_subnets["pub_sn_2"].id
-  route_table_id = aws_route_table.pub_rt.id
-}
-resource "aws_route_table_association" "pri_rt_ass_1" {
-  subnet_id      = aws_subnet.tf_subnets["pri_sn_1"].id
-  route_table_id = aws_route_table.pri_rt.id
-}
-resource "aws_route_table_association" "pri_rt_ass_2" {
-  subnet_id      = aws_subnet.tf_subnets["pri_sn_2"].id
+resource "aws_route_table_association" "pri_rt_ass" {
+  for_each = toset(["pri_sn_1", "pri_sn_2"])
+  subnet_id      = aws_subnet.tf_subnets["${each.value}"].id
   route_table_id = aws_route_table.pri_rt.id
 }
