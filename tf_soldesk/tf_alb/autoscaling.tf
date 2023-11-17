@@ -45,7 +45,7 @@ resource "aws_autoscaling_group" "tf_asg" {
 
   depends_on = [aws_nat_gateway.tf_alb_nat_gateway]
 }
-
+# scale up alarm
 resource "aws_autoscaling_policy" "tf_asg-cpu-policy" {
   name                   = "tf_asg-cpu-policy"
   autoscaling_group_name = aws_autoscaling_group.tf_asg.name
