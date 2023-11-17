@@ -10,9 +10,9 @@ resource "aws_lb" "tf_alb" {
     aws_subnet.tf_subnets["pub_sn_2"].id,
   ]
 
-  depends_on = [
-    aws_instance.tf_alb_web,
-  ]
+  # depends_on = [
+  #   aws_instance.tf_alb_web,
+  # ]
 
   tags = {
     Name = "app-tier-internal-lb"
@@ -40,16 +40,16 @@ resource "aws_lb_listener" "tf-alb-listner" {
     target_group_arn = aws_lb_target_group.tf_alb-tg.arn
   }
 }
-locals {
-  instances = [for o in aws_instance.tf_alb_web : o.id]
-}
-# # 대상그룹 연결
-resource "aws_lb_target_group_attachment" "tf_alb_tg_att" {
-  count            = 2
-  target_group_arn = aws_lb_target_group.tf_alb-tg.arn
-  target_id        = local.instances[count.index]
-  port             = 80
-  depends_on = [
-    aws_lb_listener.tf-alb-listner,
-  ]
-}
+# locals {
+#   instances = [for o in aws_instance.tf_alb_web : o.id]
+# }
+# # # 대상그룹 연결
+# resource "aws_lb_target_group_attachment" "tf_alb_tg_att" {
+#   count            = 2
+#   target_group_arn = aws_lb_target_group.tf_alb-tg.arn
+#   target_id        = local.instances[count.index]
+#   port             = 80
+#   depends_on = [
+#     aws_lb_listener.tf-alb-listner,
+#   ]
+# }
