@@ -38,3 +38,22 @@ variable "subnets" {
     },
   ]
 }
+variable "ports" {
+  default = {
+    80 = {
+      type       = "ingress"
+      protocol   = "tcp"
+      cidr_block = "0.0.0.0/0"
+    },
+    443 = {
+      type       = "ingress"
+      protocol   = "tcp"
+      cidr_block = "0.0.0.0/0"
+    }
+    0 = {
+      type       = "egress"
+      protocol   = "-1"
+      cidr_block = "0.0.0.0/0"
+    }
+  }
+}

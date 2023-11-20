@@ -39,6 +39,7 @@ resource "aws_autoscaling_group" "tf_asg" {
   health_check_type = "ELB"
 
   min_size                  = 2
+  desired_capacity          = 2
   max_size                  = 10
   health_check_grace_period = 300
   force_delete              = true
@@ -48,23 +49,22 @@ resource "aws_autoscaling_group" "tf_asg" {
 # scale up alarm
 resource "aws_autoscaling_policy" "tf_asg-cpu-policy" {
   name                   = "tf_asg-cpu-policy"
-  autoscaling_group_name = aws_autoscaling_group.tf_asg.name
+  scaling_adjustment     = 1
   adjustment_type        = "ChangeInCapacity"
-  scaling_adjustment     = "1"
-  cooldown               = "300"
-  policy_type            = "SimpleScaling"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.tf_asg.name
 }
 
 resource "aws_cloudwatch_metric_alarm" "tf_asg-cpu-alarm" {
   alarm_name          = "tf_asg-cpu-alarm"
   alarm_description   = "tf_asg-cpu-alarm"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "2"
-  metric_name         = "CPUUtilization"
+  evaluation_periods  = 1
   namespace           = "AWS/EC2"
-  period              = "30"
+  period              = 30
   statistic           = "Average"
-  threshold           = "80"
+  threshold           = 80
+  metric_name         = "CPUCheck"
 
   dimensions = {
     "AutoScalingGroupName" = aws_autoscaling_group.tf_asg.name
@@ -77,23 +77,22 @@ resource "aws_cloudwatch_metric_alarm" "tf_asg-cpu-alarm" {
 # scale down alarm
 resource "aws_autoscaling_policy" "tf_asg-cpu-policy-scaledown" {
   name                   = "tf_asg-cpu-policy-scaledown"
-  autoscaling_group_name = aws_autoscaling_group.tf_asg.name
+  scaling_adjustment     = -1
   adjustment_type        = "ChangeInCapacity"
-  scaling_adjustment     = "-1"
-  cooldown               = "300"
-  policy_type            = "SimpleScaling"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.tf_asg.name
 }
 
-resource "aws_cloudwatch_metric_alarm" "example-cpu-alarm-scaledown" {
+resource "aws_cloudwatch_metric_alarm" "tf_asg-cpu-alarm-scaledown" {
   alarm_name          = "example-cpu-alarm-scaledown"
   alarm_description   = "example-cpu-alarm-scaledown"
   comparison_operator = "LessThanOrEqualToThreshold"
-  evaluation_periods  = "2"
-  metric_name         = "CPUUtilization"
+  evaluation_periods  = 1
   namespace           = "AWS/EC2"
-  period              = "30"
+  period              = 30
   statistic           = "Average"
-  threshold           = "30"
+  threshold           = 50
+  metric_name         = "CPUCheck"
 
   dimensions = {
     "AutoScalingGroupName" = aws_autoscaling_group.tf_asg.name

@@ -83,12 +83,12 @@ resource "aws_route_table" "pri_rt" {
 
 #Connect Routing tables
 resource "aws_route_table_association" "pub_rt_ass" {
-  for_each = toset(["pub_sn_1", "pub_sn_2"])
+  for_each       = toset(["pub_sn_1", "pub_sn_2"])
   subnet_id      = aws_subnet.tf_subnets["${each.value}"].id
   route_table_id = aws_route_table.pub_rt.id
 }
 resource "aws_route_table_association" "pri_rt_ass" {
-  for_each = toset(["pri_sn_1", "pri_sn_2"])
+  for_each       = toset(["pri_sn_1", "pri_sn_2"])
   subnet_id      = aws_subnet.tf_subnets["${each.value}"].id
   route_table_id = aws_route_table.pri_rt.id
 }

@@ -8,32 +8,14 @@ resource "aws_security_group" "tf_alb_sg" {
     Name = "tf_alb_sg"
   }
 }
-//create sg_rule http
-resource "aws_security_group_rule" "tf_alb_sg_http" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.tf_alb_sg.id
-}
 
-//create sg_rule https
-resource "aws_security_group_rule" "tf_alb_sg_https" {
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.tf_alb_sg.id
-}
-
-//create sg_rule egress
-resource "aws_security_group_rule" "tf_alb_sg_egress" {
-  type              = "egress"
-  to_port           = 0
-  from_port         = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+//create sg_rule
+resource "aws_security_group_rule" "tf_alb_sg_rule" {
+  for_each          = var.ports
+  type              = each.value.type
+  to_port           = each.key
+  from_port         = each.key
+  protocol          = each.value.protocol
+  cidr_blocks       = [each.value.cidr_block]
   security_group_id = aws_security_group.tf_alb_sg.id
 }
