@@ -59,7 +59,7 @@ resource "aws_route_table" "tf_pub_rt" {
 
 // Associate a Public Route Table With a Public Subnet
 resource "aws_route_table_association" "tf_pub_rt_ass" {
-  for_each       = var.subnets["pub_subnets"]
+  for_each       = var.subnets.pub_subnets
   subnet_id      = aws_subnet.tf_sn["${each.key}"].id
   route_table_id = aws_route_table.tf_pub_rt.id
 }
@@ -75,7 +75,7 @@ resource "aws_route_table" "tf_pri_rt" {
 
 // Associate a Public Route Table With a Public Subnet
 resource "aws_route_table_association" "tf_pri_rt_ass" {
-  for_each       = var.subnets["pri_subnets"]
+  for_each       = var.subnets.pri_subnets
   subnet_id      = aws_subnet.tf_sn["${each.key}"].id
   route_table_id = aws_route_table.tf_pri_rt.id
 }
