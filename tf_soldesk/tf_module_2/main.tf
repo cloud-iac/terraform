@@ -3,13 +3,16 @@ provider "aws" {
 }
 module "vpc" {
   source     = "./vpc"
-  pjt_name   = "test"
-  cidr_block = "172.16.0.0/16"
+  pjt_name   = var.pjt_name
+  cidr_block = var.vpc_cidr_block
 }
 module "subnet" {
-  source = "./subnet"
-  pjt_name   = "test"
-  vpc_id = module.vpc.vpc_id
+  source   = "./subnet"
+  pjt_name = var.pjt_name
+  vpc_id   = module.vpc.vpc_id
+  igw_id   = module.vpc.igw_id
+  subnets  = var.subnets
+
 }
 output "outputs" {
   value = {

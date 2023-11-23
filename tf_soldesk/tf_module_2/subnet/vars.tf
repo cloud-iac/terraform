@@ -1,6 +1,7 @@
 variable "region" { default = "ap-northeast-2" }
 variable "pjt_name" { default = "demo_module" }
-variable "vpc_id" { default = null}
+variable "vpc_id" { default = null }
+variable "igw_id" { default = null }
 variable "subnets" {
   default = {
     pub_subnets = {
